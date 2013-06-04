@@ -1,0 +1,22 @@
+{
+  "name": "ardrone-autonomy",
+  "version": "0.1.0",
+  "description": "Building blocks for autonomous flying an AR.Drone.",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eschnou/ardrone-autonomy.git"
+  },
+  "keywords": [
+    "drone",
+    "ardrone",
+    "nodecopter",
+    "parrot",
+    "autonomous",
+    "kalman",
+    "pid"
+  ],
+  "dependencies": {
+  },
+  "author": "Laurent Eschenauer <laurent@eschenauer.be>",
+  "license": "MIT"
+}
