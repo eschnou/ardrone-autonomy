@@ -25,10 +25,10 @@ for an Extended Kalman Filter. This provides much more stable and usable state e
 
 ```
 var client = require('ar-drone').createClient();
-var autonomy = require('autonomy').stateEstimate(client);
+var state = require('autonomy').stateEstimate(client);
 
-autonomy.on('positon', function(position) {
-    console.log('Estimated position: %j', position);
+state.on('state', function(state) {
+    console.log('Estimated state: %j', state);
 });
 
 ```
