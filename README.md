@@ -1,9 +1,8 @@
 # ardrone-autonomy
 
 Provides key building blocks to create autonomous flight applications
-with the AR.Drone. Works as a layer on top of the [node-ar-drone]() library.
-
-This work is based on the [Visual Navigation for Flying Robots](http://vision.in.tum.de/teaching/ss2013/visnav2013) course.
+with the AR.Drone. Works as a layer on top of the [node-ar-drone]() library. This work is based on 
+the [Visual Navigation for Flying Robots](http://vision.in.tum.de/teaching/ss2013/visnav2013) course.
 
 **This work has just started, this branch is the development branch, there are no packaged release yet.**
 
