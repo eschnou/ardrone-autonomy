@@ -6,31 +6,27 @@ the [Visual Navigation for Flying Robots](http://vision.in.tum.de/teaching/ss201
 
 **This work has just started, this branch is the development branch, there are no packaged release yet.**
 
-## Planned features
-
-Here is a list of all the cool stuff this library could provide one day.
+## Features
 
 * **Simple State estimation** based on the integration of the drone odometry.
 
+* **Camera back-projection** to estimate the position of an object detected by the camera.
+Currently used to estimate a tag position in the drone coordinate system based on its detection
+by the bottom camera.
+
 * **Extended Kalman Filter** leveraging the onboard tag detection as the observation source
 for an Extended Kalman Filter. This provides much more stable and usable state estimate.
+
+## Upcoming features
 
 * **PID Controler** to autonomously control the drone position.
 
 * **Visual motion estimation** estimates motion from visual image processing.
 
-
 ## Usage
 
-```
-var client = require('ar-drone').createClient();
-var state = require('autonomy').stateEstimate(client);
-
-state.on('state', function(state) {
-    console.log('Estimated state: %j', state);
-});
-
-```
+High level function needs to be implemented to ease things for the end-user,
+as well as writing some docs. All this is WIP.
 
 ## License
 
