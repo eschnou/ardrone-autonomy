@@ -33,32 +33,33 @@ client.config('detect:detect_type', 12);
 //
 repl._repl.context['ctrl'] = ctrl;
 
-// Log navdata and estimated state - for debugging
+// Log control data for debugging
 var folder = df(new Date(), "yyyy-mm-dd_hh-MM-ss");
 fs.mkdir(path.join('/tmp', folder), function() {
   dataStream = fs.createWriteStream(path.join('/tmp', folder, 'data.txt'));
 });
 
-client.on('navdata', function(data) {
-    var state = ctrl.state()
-      , cmds  = ctrl.commands()
-      , vx    = data.demo.velocity.x / 1000
-      , vy    = data.demo.velocity.y / 1000
-      , vz    = data.demo.velocity.z / 1000
-      , x     = state.x
-      , y     = state.y
-      , z     = state.z
-      , yaw   = state.yaw
-      , cx    = cmds.cx
-      , cy    = cmds.cy
-      , cz    = cmds.cz
-      , cyaw  = cmds.cyaw
-      , tag   = (data.visionDetect && data.visionDetect.nbDetected > 0)
-      ;
-
-  dataStream.write(x + "," + y + "," + z + "," + yaw + ","
-                   + vx + "," + vy + "," + vz +"," + cx + ","
-                   + cy + "," + cz + "," + cyaw + "," + tag + "\n");
+ctrl.on('controlData', function(d) {
+   dataStream.write(d.state.x + "," +
+                    d.state.y + "," +
+                    d.state.z + "," +
+                    d.state.yaw + "," +
+                    d.state.vx + "," +
+                    d.state.vy + "," +
+                    d.goal.x + "," +
+                    d.goal.y + "," +
+                    d.goal.z + "," +
+                    d.goal.yaw + "," +
+                    d.error.ex + "," +
+                    d.error.ey + "," +
+                    d.error.ez + "," +
+                    d.error.eyaw + "," +
+                    d.control.ux + "," +
+                    d.control.uy + "," +
+                    d.control.uz + "," +
+                    d.control.uyaw + "," +
+                    d.last_ok + "," +
+                    d.tag + "\n");
 });
 
 
