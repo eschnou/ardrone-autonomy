@@ -16,7 +16,8 @@
     "pid"
   ],
   "dependencies": {
-    "sylvester": "0.0.21"
+    "sylvester": "0.0.21",
+    "async": "~0.2.9"
   },
   "author": "Laurent Eschenauer <laurent@eschenauer.be>",
   "license": "MIT"
