@@ -68,28 +68,32 @@ async.waterfall([
     },
     function(cb){
         console.log("Going to base position");
-        ctrl.go({x: 0, y: 0}, cb);
+        ctrl.go({x: 0, y:0, z: 1.5}, cb);
     },
     function(cb){
         console.log("Going to 1");
-        ctrl.go({x: 1, y: 0}, cb);
+        ctrl.go({x: 2, y: 0}, cb);
     },
     function(cb) {
         console.log("Going to 2");
-        ctrl.go({x: 1, y: 1}, cb);
+        ctrl.go({x: 2, y: 2}, cb);
     },
     function(cb) {
         console.log("Going to 3");
-        ctrl.go({x: 0, y: 1}, cb);
+        ctrl.go({x: 0, y: 2}, cb);
     },
     function(cb) {
         console.log("Going back to 0");
         ctrl.go({x: 0, y: 0}, cb);
     },
     function(cb) {
+        console.log("Waiting 1 sec");
+        setTimeout(cb, 1000);
+    },
+    function(cb) {
         console.log("Landing...");
         ctrl.disable();
-        client.land();
+        client.land(cb);
     }
 ],  function (err, result) {
     if (err) {
