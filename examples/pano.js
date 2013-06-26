@@ -1,103 +1,30 @@
-var fs = require('fs')
-  , async = require('async')
-  , path = require('path')
-  , df = require('dateformat')
-  , arDrone = require('ar-drone')
-  , arDroneConstants = require('ar-drone/lib/constants')
-  , autonomy = require('..');
+var df = require('dateformat')
+  , autonomy = require('../')
+  , mission  = autonomy.createMission()
+  ;
 
-var client  = arDrone.createClient();
-var ctrl    = new autonomy.Controller(client, {debug: false});
+mission.log("mission-" + df(new Date(), "yyyy-mm-dd_hh-MM-ss") + ".txt");
 
-// Configure the client for tag detection
-function navdata_option_mask(c) {
-  return 1 << c;
-}
+mission.takeoff()
+       .zero()
+       .hover(1000)
+       .go({x:0, y:0})
+       .altitude(1.5)
+       .cw(90)
+       .cw(90)
+       .cw(90)
+       .cw(90)
+       .altitude(0.5)
+       .land();
 
-var navdata_options = (
-    navdata_option_mask(arDroneConstants.options.DEMO)
-  | navdata_option_mask(arDroneConstants.options.VISION_DETECT)
-  | navdata_option_mask(arDroneConstants.options.MAGNETO)
-  | navdata_option_mask(arDroneConstants.options.WIFI)
-);
-
-// Connect and configure the drone
-client.config('general:navdata_demo', true);
-client.config('general:navdata_options', navdata_options);
-client.config('video:video_channel', 1);
-client.config('detect:detect_type', 12);
-
-// Log control data for debugging
-var folder = df(new Date(), "yyyy-mm-dd_hh-MM-ss");
-fs.mkdir(path.join('/tmp', folder), function() {
-  dataStream = fs.createWriteStream(path.join('/tmp', folder, 'data.txt'));
-});
-
-ctrl.on('controlData', function(d) {
-   dataStream.write(d.state.x + "," +
-                    d.state.y + "," +
-                    d.state.z + "," +
-                    d.state.yaw + "," +
-                    d.state.vx + "," +
-                    d.state.vy + "," +
-                    d.goal.x + "," +
-                    d.goal.y + "," +
-                    d.goal.z + "," +
-                    d.goal.yaw + "," +
-                    d.error.ex + "," +
-                    d.error.ey + "," +
-                    d.error.ez + "," +
-                    d.error.eyaw + "," +
-                    d.control.ux + "," +
-                    d.control.uy + "," +
-                    d.control.uz + "," +
-                    d.control.uyaw + "," +
-                    d.last_ok + "," +
-                    d.tag + "\n");
-});
-
-// Let's move !
-async.waterfall([
-    function(cb){
-        console.log("Waiting for takeoff");
-        client.takeoff(cb);
-    },
-    function(cb){
-        console.log("Going to base position");
-        ctrl._ekf.reset();
-        ctrl.go({x: 0, y: 0, z: 1}, cb);
-    },
-    function(cb){
-        console.log("Going to 90");
-        ctrl.go({yaw: 90}, cb);
-    },
-    function(cb) {
-        console.log("Going to 180");
-        ctrl.go({yaw: 180}, cb);
-    },
-    function(cb) {
-        console.log("Going to 270");
-        ctrl.go({yaw: 270}, cb);
-    },
-    function(cb) {
-        console.log("Going back to 0");
-        ctrl.go({yaw: 0}, cb);
-    },
-    function(cb) {
-        console.log("Going back home");
-        ctrl.go({x:0, y:0}, cb);
-    },
-    function(cb) {
-        console.log("Landing...");
-        ctrl.disable();
-        client.land();
-    }
-],  function (err, result) {
+mission.run(function (err, result) {
     if (err) {
-       console.log("Oops, something bad happened: %s", err);
-       client.stop();
-      client.land();
+        console.trace("Oops, something bad happened: %s", err.message);
+        mission.client().stop();
+        mission.client().land();
     } else {
         console.log("We are done!");
+        process.exit(0);
     }
-})
+});
+
