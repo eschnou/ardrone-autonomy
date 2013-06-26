@@ -20,6 +20,14 @@ function Client(options) {
     }, DT);
 }
 
+Client.prototype.takeoff = function(callback) {
+    setTimeout(callback, 1000);
+}
+
+Client.prototype.land = function(callback) {
+    setTimeout(callback, 1000);
+}
+
 Client.prototype.front = function(speed) {
     this._speed.vx = speed;
 }

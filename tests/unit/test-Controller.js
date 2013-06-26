@@ -115,5 +115,57 @@ test('Controller', {
 
         ctrl.zero();
         assert(ctrl._ekf.reset.calledOnce);
+    },
+
+    'up': function() {
+        var ctrl  = new autonomy.Controller(this.mockClient);
+        var state = {x: 1, y: 2, z: 3, yaw: 0};
+
+        ctrl._state = state;
+        ctrl.up(1);
+        var goal = ctrl._goal;
+
+        assert.equal(goal.x, state.x);
+        assert.equal(goal.y, state.y);
+        assert.equal(goal.z, state.z + 1);
+        assert.equal(goal.yaw, state.yaw);
+    },
+
+    'down is invserse of up': function() {
+        var ctrl    = new autonomy.Controller(this.mockClient);
+        var cb      = function() {};
+        ctrl._state = {x: 0, y: 0, z: 1, yaw: 0};
+        sinon.spy(ctrl, 'up');
+
+        ctrl.down(1, cb);
+        assert(ctrl.up.calledWith(-1, cb));
+    },
+
+    'cannot go too low': function() {
+        var ctrl  = new autonomy.Controller(this.mockClient);
+        var state = {x: 0, y: 0, z: 1, yaw: 0};
+
+        ctrl._state = state;
+        ctrl.down(1);
+        var goal = ctrl._goal;
+
+        assert.equal(goal.x, state.x);
+        assert.equal(goal.y, state.y);
+        assert.equal(goal.z, 0.5);
+        assert.equal(goal.yaw, state.yaw);
+    },
+
+    'altitude': function() {
+        var ctrl  = new autonomy.Controller(this.mockClient);
+        var state = {x: 0, y: 0, z: 1, yaw: 0};
+
+        ctrl._state = state;
+        ctrl.altitude(3);
+        var goal = ctrl._goal;
+
+        assert.equal(goal.x, state.x);
+        assert.equal(goal.y, state.y);
+        assert.equal(goal.z, 3);
+        assert.equal(goal.yaw, state.yaw);
     }
 });
