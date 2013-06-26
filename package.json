@@ -15,9 +15,17 @@
     "kalman",
     "pid"
   ],
+  "scripts": {
+    "test": "node tests/run.js"
+  },
   "dependencies": {
     "sylvester": "0.0.21",
     "async": "~0.2.9"
+  },
+  "devDependencies": {
+    "utest": "0.0.6",
+    "urun": "0.0.6",
+    "sinon": "1.4.2"
   },
   "author": "Laurent Eschenauer <laurent@eschenauer.be>",
   "license": "MIT"
