@@ -107,5 +107,13 @@ test('Controller', {
 
         ctrl.left(1, cb);
         assert(ctrl.right.calledWith(-1, cb));
+    },
+
+    'zero reset the kalman filter': function() {
+        var ctrl    = new autonomy.Controller(this.mockClient);
+        sinon.spy(ctrl._ekf, 'reset');
+
+        ctrl.zero();
+        assert(ctrl._ekf.reset.calledOnce);
     }
 });
