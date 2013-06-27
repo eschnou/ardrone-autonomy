@@ -6,13 +6,17 @@ Instead of directly controlling the drone speed, you can use Autonomy
 to plan and execute missions by describing the path, altitude and 
 orientation the drone must follow.
 
+If you are a #nodecopter enthusiast, then this library will enable you
+to focus on higher level use cases and experiments. You focus on where
+you want to go, the library takes your drone there.
+
 This work is based on the [Visual Navigation for Flying Robots](http://vision.in.tum.de/teaching/ss2013/visnav2013) course.
 
-** WARNING: **  This is early work. __Autonomous__ means that this library will move your drone
+**WARNING:**  This is early work. _Autonomous_ means that this library will move your drone
 automaticaly to reach a given target. There isn't much security in place yet, so if you 
 do something wrong, you may have your drone fly away :-)
 
-** Experiment with this library in a closed/controlled environment before going in the wild **
+**!! Experiment with this library in a closed/controlled environment before going in the wild !!**
 
 ## Features
 
@@ -72,9 +76,10 @@ mission.run(function (err, result)
 Log the mission data, csv formatted, in the given file. Makes it really usefull to
 debug/plot the state and controller behavior.
 
-### mission.run(callback)
+#### mission.run(callback)
 
-Execute the mission. The callback has the form `function(err,result)`.
+Execute the mission. The callback has the form `function(err,result)` and will be triggered in
+case of error or at the end of the mission.
 
 #### mission.takeoff()
 
