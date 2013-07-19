@@ -39,14 +39,6 @@ fs.mkdir(path.join('/tmp', folder), function() {
   dataStream = fs.createWriteStream(path.join('/tmp', folder, 'data.txt'));
 });
 
-ctrl.on('goalReached', function(state) {
-    console.log("Goal reached.");
-});
-
-ctrl.on('goalLeft', function(state) {
-    console.log("Goal left.");
-});
-
 ctrl.on('controlData', function(d) {
    dataStream.write(d.state.x + "," +
                     d.state.y + "," +
