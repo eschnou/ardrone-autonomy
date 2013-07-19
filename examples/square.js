@@ -1,19 +1,39 @@
 var df = require('dateformat')
   , autonomy = require('../')
+  , arDrone = require('ar-drone')
+  , arDroneConstants = require('ar-drone/lib/constants')
   , mission  = autonomy.createMission()
   ;
+
+function navdata_option_mask(c) {
+  return 1 << c;
+}
+
+// From the SDK.
+var navdata_options = (
+    navdata_option_mask(arDroneConstants.options.DEMO)
+  | navdata_option_mask(arDroneConstants.options.VISION_DETECT)
+  | navdata_option_mask(arDroneConstants.options.MAGNETO)
+  | navdata_option_mask(arDroneConstants.options.WIFI)
+);
+
+// Connect and configure the drone
+mission.client().config('general:navdata_demo', true);
+mission.client().config('general:navdata_options', navdata_options);
+mission.client().config('video:video_channel', 1);
+mission.client().config('detect:detect_type', 12);
 
 mission.log("mission-" + df(new Date(), "yyyy-mm-dd_hh-MM-ss") + ".txt");
 
 mission.takeoff()
        .zero()
-       .hover(1000)
-       .altitude(1)
+       .hover(500)
+       .altitude(2)
        .forward(2)
        .right(2)
        .backward(2)
-       .left(2)
-       .hover(1000)
+       .go({x:0, y:0})
+       .hover(500)
        .land();
 
 mission.run(function (err, result) {
