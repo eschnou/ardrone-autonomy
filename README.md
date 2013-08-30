@@ -110,10 +110,14 @@ Add a wait step to the mission. Will wait for the given delay (in ms) before pro
 
 Add a movement step to the mission. Will go the given position before proceeding to next step. The position is a Controller goal such as {x: 0, y: 0, z: 1, yaw: 90}.
 
-### mission.task(function)
+#### mission.task(function(callback){..})
 
 Add a task step to the mission. Will execute the provided function before proceeding to the next step. A callback argument is passed to the function, it should be called when the 
 task is done.
+
+#### mission.taskSync(function)
+
+Add a task step to the mission. Will execute the provided function before proceeding to the next step.
 
 #### mission.zero()
 
