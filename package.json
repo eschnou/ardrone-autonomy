@@ -1,6 +1,6 @@
 {
   "name": "ardrone-autonomy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Building blocks for autonomous flying an AR.Drone.",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "sylvester": "0.0.21",
-    "async": "~0.2.9"
+    "async": "0.2.9"
   },
   "devDependencies": {
     "utest": "0.0.6",
