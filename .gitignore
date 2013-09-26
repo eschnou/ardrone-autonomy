@@ -1,0 +1,6 @@
+*.swp
+_site/
+examples/
+lib/
+mission*
+node_modules/
