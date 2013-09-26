@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Ardrone-autonomy by eschnou</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Ardrone-autonomy</h1>
+        <h2>Provides key building blocks to create autonomous flight applications with the #nodecopter (AR.Drone).</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/eschnou/ardrone-autonomy/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/eschnou/ardrone-autonomy/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/eschnou/ardrone-autonomy" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="ardrone-autonomy" class="anchor" href="#ardrone-autonomy"><span class="octicon octicon-link"></span></a>ardrone-autonomy</h1>
+
+<p>An autonomous flight library for the ARDrone, built on top of 
+the <a href="https://github.com/felixge/node-ar-drone">node-ar-drone</a> library. 
+Instead of directly controlling the drone speed, you can use Autonomy 
+to plan and execute missions by describing the path, altitude and 
+orientation the drone must follow.</p>
+
+<p>If you are a #nodecopter enthusiast, then this library will enable you
+to focus on higher level use cases and experiments. You focus on where
+you want to go, the library takes your drone there.</p>
+
+<p>This work is based on the <a href="http://vision.in.tum.de/teaching/ss2013/visnav2013">Visual Navigation for Flying Robots</a> course.</p>
+
+<p><strong>WARNING:</strong>  This is early work. <em>Autonomous</em> means that this library will move your drone
+automaticaly to reach a given target. There isn't much security in place yet, so if you 
+do something wrong, you may have your drone fly away :-)</p>
+
+<p><strong>!! Experiment with this library in a closed/controlled environment before going in the wild !!</strong></p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li><p><strong>Extended Kalman Filter</strong> leveraging the onboard tag detection as the observation source
+for an Extended Kalman Filter. This provides much more stable and usable state estimate.</p></li>
+<li><p><strong>Camera projection and back-projection</strong> to estimate the position of an object detected by the camera.
+Currently used to estimate a tag position in the drone coordinate system based on its detection
+by the bottom camera.</p></li>
+<li><p><strong>PID Controler</strong> to autonomously control the drone position.</p></li>
+<li><p><strong>Mission planner</strong> to prepare a flight/task plan and then execute it.</p></li>
+</ul><h3>
+<a name="planned-features" class="anchor" href="#planned-features"><span class="octicon octicon-link"></span></a>Planned features</h3>
+
+<ul>
+<li><p><strong>VSLAM</strong> to improve the drone localization estimates.</p></li>
+<li><p><strong>Object tracking</strong> to detect and track objects in the video stream.</p></li>
+</ul><h2>
+<a name="mission" class="anchor" href="#mission"><span class="octicon octicon-link"></span></a>Mission</h2>
+
+<p>This module exposes a high level API to plan and execute missions, by focusing on where
+the drone should go instead of its low-level movements. Here is a simple example, 
+with the drone taking off, travelling alongs a 2 x 2 meters square ane then landing.</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">autonomy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'ardrone-autonomy'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">mission</span>  <span class="o">=</span> <span class="nx">autonomy</span><span class="p">.</span><span class="nx">createMission</span><span class="p">();</span>
+
+<span class="nx">mission</span><span class="p">.</span><span class="nx">takeoff</span><span class="p">()</span>
+       <span class="p">.</span><span class="nx">zero</span><span class="p">()</span>       <span class="c1">// Sets the current state as the reference</span>
+       <span class="p">.</span><span class="nx">altitude</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1">// Climb to altitude = 1 meter</span>
+       <span class="p">.</span><span class="nx">forward</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>   
+       <span class="p">.</span><span class="nx">right</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>     
+       <span class="p">.</span><span class="nx">backward</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> 
+       <span class="p">.</span><span class="nx">left</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+       <span class="p">.</span><span class="nx">hover</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1">// Hover in place for 1 second</span>
+       <span class="p">.</span><span class="nx">land</span><span class="p">();</span>
+
+<span class="nx">mission</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">trace</span><span class="p">(</span><span class="s2">"Oops, something bad happened: %s"</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+        <span class="nx">mission</span><span class="p">.</span><span class="nx">client</span><span class="p">().</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="nx">mission</span><span class="p">.</span><span class="nx">client</span><span class="p">().</span><span class="nx">land</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Mission success!"</span><span class="p">);</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="mission-api" class="anchor" href="#mission-api"><span class="octicon octicon-link"></span></a>Mission API</h3>
+
+<h4>
+<a name="missionlogpath" class="anchor" href="#missionlogpath"><span class="octicon octicon-link"></span></a>mission.log(path)</h4>
+
+<p>Log the mission data, csv formatted, in the given file. Makes it really usefull to
+debug/plot the state and controller behavior.</p>
+
+<h4>
+<a name="missionruncallback" class="anchor" href="#missionruncallback"><span class="octicon octicon-link"></span></a>mission.run(callback)</h4>
+
+<p>Execute the mission. The callback has the form <code>function(err,result)</code> and will be triggered in
+case of error or at the end of the mission.</p>
+
+<h4>
+<a name="missiontakeoff" class="anchor" href="#missiontakeoff"><span class="octicon octicon-link"></span></a>mission.takeoff()</h4>
+
+<p>Add a takeoff step to the mission.</p>
+
+<h4>
+<a name="missionforwardbackwardleftrightupdowndistance" class="anchor" href="#missionforwardbackwardleftrightupdowndistance"><span class="octicon octicon-link"></span></a>mission.forward/backward/left/right/up/down(distance)</h4>
+
+<p>Add a movement step to the mission. The drone will move in the given direction by the distance (in meters) before
+proceeding to next step. The drone will also attempt to maintain all other degrees of freedom.</p>
+
+<h4>
+<a name="missionaltitudeheight" class="anchor" href="#missionaltitudeheight"><span class="octicon octicon-link"></span></a>mission.altitude(height)</h4>
+
+<p>Add a altitude step to the mission. Will climb to the given height before proceeding to next step.</p>
+
+<h4>
+<a name="missioncwccwangle" class="anchor" href="#missioncwccwangle"><span class="octicon octicon-link"></span></a>mission.cw/ccw(angle)</h4>
+
+<p>Add a rotation step to the mission. Will turn by the given angle (in Deg) before proceeding to the next step.</p>
+
+<h4>
+<a name="missionhoverdelay" class="anchor" href="#missionhoverdelay"><span class="octicon octicon-link"></span></a>mission.hover(delay)</h4>
+
+<p>Add a hover step to the mission. Will hover in place for the given delay (in ms) before proceeding to next step.</p>
+
+<h4>
+<a name="missionwaitdelay" class="anchor" href="#missionwaitdelay"><span class="octicon octicon-link"></span></a>mission.wait(delay)</h4>
+
+<p>Add a wait step to the mission. Will wait for the given delay (in ms) before proceeding to next step.</p>
+
+<h4>
+<a name="missiongoposition" class="anchor" href="#missiongoposition"><span class="octicon octicon-link"></span></a>mission.go(position)</h4>
+
+<p>Add a movement step to the mission. Will go the given position before proceeding to next step. The position is a Controller goal such as {x: 0, y: 0, z: 1, yaw: 90}.</p>
+
+<h4>
+<a name="missiontaskfunctioncallback" class="anchor" href="#missiontaskfunctioncallback"><span class="octicon octicon-link"></span></a>mission.task(function(callback){..})</h4>
+
+<p>Add a task step to the mission. Will execute the provided function before proceeding to the next step. A callback argument is passed to the function, it should be called when the 
+task is done.</p>
+
+<h4>
+<a name="missiontasksyncfunction" class="anchor" href="#missiontasksyncfunction"><span class="octicon octicon-link"></span></a>mission.taskSync(function)</h4>
+
+<p>Add a task step to the mission. Will execute the provided function before proceeding to the next step.</p>
+
+<h4>
+<a name="missionzero" class="anchor" href="#missionzero"><span class="octicon octicon-link"></span></a>mission.zero()</h4>
+
+<p>Add a zeroing step to the mission. This will set the current position/orientation as 
+the base state of the kalman filter (i.e. {x: 0, y:0, yaw:0}). If you are not using
+a tag as your base position, it is a good idea to zero() after takeoff.</p>
+
+<h2>
+<a name="controller-api" class="anchor" href="#controller-api"><span class="octicon octicon-link"></span></a>Controller API</h2>
+
+<p>This module exposes a high level API to control the position. It is built using an
+Extended Kalman Filter to estimate the position and a PID controller to move the drone
+to a given target.</p>
+
+<p>The easiest way to try the Controller is to play with the repl provided in the examples:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">$</span> <span class="nx">node</span> <span class="nx">examples</span><span class="o">/</span><span class="nx">repl</span><span class="p">.</span><span class="nx">js</span>
+<span class="c1">// Make the drone takeoff</span>
+<span class="nx">drone</span><span class="o">&gt;</span> <span class="nx">takeoff</span><span class="p">()</span>
+<span class="c1">// Move the drone to position (1,1)</span>
+<span class="nx">drone</span><span class="o">&gt;</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">go</span><span class="p">({</span><span class="nx">x</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span><span class="mi">1</span><span class="p">});</span>
+<span class="c1">// Climb to altitude 2 meters</span>
+<span class="nx">drone</span><span class="o">&gt;</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">altitude</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="c1">// Spin 90 deg to the right</span>
+<span class="nx">drone</span><span class="o">&gt;</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">cw</span><span class="p">(</span><span class="mi">90</span><span class="p">);</span>
+<span class="c1">// Go back to (0,0)</span>
+<span class="nx">drone</span><span class="o">&gt;</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">go</span><span class="p">({</span><span class="nx">x</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span><span class="mi">0</span><span class="p">});</span>
+<span class="c1">// Hover in place</span>
+<span class="nx">drone</span><span class="o">&gt;</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">hover</span><span class="p">();</span>
+<span class="c1">// Land</span>
+<span class="nx">drone</span><span class="o">&gt;</span> <span class="nx">land</span><span class="p">();</span>
+</pre></div>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>The MIT License</p>
+
+<p>Copyright (c) 2013 by Laurent Eschenauer <a href="mailto:laurent@eschenauer.be">laurent@eschenauer.be</a></p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
