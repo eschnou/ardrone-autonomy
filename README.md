@@ -57,7 +57,7 @@ mission.takeoff()
        .hover(1000)  // Hover in place for 1 second
        .land();
 
-mission.run(function (err, result)
+mission.run(function (err, result) {
     if (err) {
         console.trace("Oops, something bad happened: %s", err.message);
         mission.client().stop();
