@@ -1,6 +1,6 @@
 {
   "name": "ardrone-autonomy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Building blocks for autonomous flying an AR.Drone.",
   "repository": {
     "type": "git",
