@@ -10,8 +10,8 @@ exports.control = function(client, options) {
     return new autonomy.Controller(client, options);
 }
 
-exports.createMission = function(options) {
-    var client  = ardrone.createClient(options);
+exports.createMission = function(options, client) {
+    var client  = client || ardrone.createClient(options);
     var control = new autonomy.Controller(client, options);
     var mission = new autonomy.Mission(client, control, options);
 
